@@ -46,14 +46,16 @@ apiRouter.use('/:module', async (req, res, next) => {
     // Use the router
     importedModule.default(req, res, next);
   } catch (error) {
-    // Handle different error types
-    if (error.code === 'MODULE_NOT_FOUND') {
-      res.status(404).send('Module not found');
-    } else if (error.message === 'Invalid router module') {
-      res.status(500).send('Invalid module structure');
-    } else {
-      console.error(`Error loading module ${moduleName}:`, error);
-      res.status(500).send('Internal server error');
+    if (error instanceof Error && 'code' in error) {
+      // Handle different error types
+      if (error.code === 'MODULE_NOT_FOUND') {
+        res.status(404).send('Module not found');
+      } else if (error.message === 'Invalid router module') {
+        res.status(500).send('Invalid module structure');
+      } else {
+        console.error(`Error loading module ${moduleName}:`, error);
+        res.status(500).send('Internal server error');
+      }
     }
   }
 });
