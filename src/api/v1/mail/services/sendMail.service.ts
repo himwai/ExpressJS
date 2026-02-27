@@ -140,18 +140,4 @@ export class SendMailService {
       emailAddress: { address: address.trim() },
     }));
   }
-
-  private normalizeEmailList(value: unknown): string[] {
-    if (value == null) return [];
-    if (!Array.isArray(value)) return [];
-
-    const out: string[] = [];
-    for (const v of value) {
-      if (typeof v === "string") {
-        const s = v.trim();
-        if (s) out.push(s);
-      }
-    }
-    return out;
-  }
 }

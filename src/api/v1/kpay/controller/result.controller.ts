@@ -8,10 +8,7 @@ import {
   QueryAllHostedCheckoutOrderResponse,
 } from "../types/typeKpayQueryOrder";
 import { ValidationError } from "../middleware/error.middleware";
-import {
-  QueryPaymentOrderRequest,
-  QueryPaymentOrderResponse,
-} from "../types/typeKpayQueryPayment";
+import { queryPaymentOrder } from "../services/queryPayment.helper";
 import { Language, OrderState, Result } from "../types/typeKpayApi";
 
 export const resultController = async (
@@ -99,25 +96,14 @@ export const resultController = async (
     const result = paymentOrder.result;
     const orderState = paymentOrder.orderState;
 
-    const kpayQueryPaymentService = new KPayService<
-      QueryPaymentOrderRequest,
-      QueryPaymentOrderResponse
-    >(baseURL, queryPaymentOrderEndpoint);
-    const paymentData = await kpayQueryPaymentService
-      .get({ outTradeNo, orderNo }, merchantCode, kpayApiKey, language)
-      .then((response: QueryPaymentOrderResponse) => {
-        if (
-          !CONFIG.API.SUCCESS_CODES.includes(response.code) ||
-          !response.data
-        ) {
-          throw new KPayApiError(
-            `Failed to query payment order: ${response.message} with code ${response.code}`,
-            undefined,
-            response.code
-          );
-        }
-        return response.data;
-      });
+    const paymentData = await queryPaymentOrder(
+      { outTradeNo, orderNo },
+      merchantCode,
+      kpayApiKey,
+      language,
+      baseURL,
+      queryPaymentOrderEndpoint
+    );
 
     const payMethodId = paymentData.payMethodId;
     const transactionTypeId = paymentData.transactionTypeId;

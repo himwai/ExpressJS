@@ -7,7 +7,7 @@ import { CONFIG } from "../config/constants";
 import { ValidationError, GraphApiError } from "../middleware/error.middleware";
 
 export const sendMailController = async (
-  req: Request<SendMailRequest>,
+  req: Request<{}, SendMailResponse, SendMailRequest>,
   res: Response<SendMailResponse>,
 ) => {
   try {
@@ -50,7 +50,7 @@ export const sendMailController = async (
     // Generate request ID for tracking
     const requestId = crypto.randomUUID();
 
-    res.status(202).json({
+    res.status(200).json({
       resultType: "SUCCESS",
       resultMessage: "Email sent successfully",
       dataContent: {

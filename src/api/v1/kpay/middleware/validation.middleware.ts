@@ -9,6 +9,11 @@ import {
   requiredRefundMetaDataFields,
 } from "../types/typeRefund";
 import { ResultRequest } from "../types/typeResult";
+import {
+  SalesResultRequest,
+  requiredSalesResultDataContentFields,
+  requiredSalesResultMetaDataFields,
+} from "../types/typeSalesResult";
 import { ValidationError } from "./error.middleware";
 
 export const validateRefundRequest = (body: Partial<RefundRequest>): void => {
@@ -114,6 +119,40 @@ export const validateOrderRequest = (body: Partial<OrderRequest>): void => {
 
   if (body.dataContent?.phone && !isValidPhone(body.dataContent.phone)) {
     throw new ValidationError("Invalid phone format");
+  }
+};
+
+export const validateSalesResultRequest = (
+  body: Partial<SalesResultRequest>
+): void => {
+  if (!body || typeof body !== "object") {
+    throw new ValidationError("Request body must be a valid object");
+  }
+
+  if (!body.metaData || typeof body.metaData !== "object") {
+    throw new ValidationError("metaData must be a valid object");
+  }
+
+  if (!body.dataContent || typeof body.dataContent !== "object") {
+    throw new ValidationError("dataContent must be a valid object");
+  }
+
+  for (const field of requiredSalesResultDataContentFields) {
+    if (!body.dataContent[field]) {
+      throw new ValidationError(`Missing required field: ${field}`);
+    }
+  }
+
+  for (const field of requiredSalesResultMetaDataFields) {
+    if (!body.metaData[field]) {
+      throw new ValidationError(`Missing required field: ${field}`);
+    }
+  }
+
+  if (!body.dataContent.outTradeNo && !body.dataContent.orderNo) {
+    throw new ValidationError(
+      "Either outTradeNo or orderNo must be provided in dataContent"
+    );
   }
 };
 

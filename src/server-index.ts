@@ -1,8 +1,14 @@
 import express, { Request, Response } from "express";
 import helmet from "helmet";
 import cors from "cors";
+import dotenv from "dotenv";
+import fs from "node:fs";
 
 import apiRouter from "./api";
+
+const envLocalPath = ".env.local";
+const envPath = fs.existsSync(envLocalPath) ? envLocalPath : ".env";
+dotenv.config({ path: envPath });
 
 const app = express();
 const port: number = parseInt(process.env.PORT || "3000", 10);

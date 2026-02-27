@@ -19,6 +19,7 @@ FROM node:lts-alpine
 WORKDIR /nodeApp
 COPY --from=builder /nodeApp/node_modules ./node_modules
 COPY --from=builder /nodeApp/build ./bin
+COPY --from=builder /nodeApp/.env.local ./.env.local
 
 ENV PORT=5000
 EXPOSE 5000
